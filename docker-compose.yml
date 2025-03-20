@@ -7,6 +7,14 @@ services:
       - global-network
     volumes:
       - /app
+    environment:
+      - BROKER_ADDRESS=${BROKER_ADDRESS}
+      - USERNAME=${USERNAME}
+      - PASSWORD=${PASSWORD}
+      - DBNAME=${DBNAME}
+      - USER=${USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - HOST=${HOST}
 
 networks:
   global-network:
