@@ -6,7 +6,7 @@ services:
     networks:
       - global-network
     volumes:
-      - /services/mqtt_client:/app
+      - ./app
 
 networks:
   global-network:
