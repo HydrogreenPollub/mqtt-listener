@@ -6,7 +6,7 @@ services:
     networks:
       - global-network
     volumes:
-      - ./app
+      - /app
 
 networks:
   global-network:
