@@ -24,6 +24,7 @@ broker_address = os.getenv("BROKER_ADDRESS")
 broker_port  = 5672
 username = os.getenv("USERNAME")
 password = os.getenv("PASSWORD")
+conn_address = broker_address+":"+broker_port
 
 
 topic = "/sensors"
@@ -71,7 +72,7 @@ try:
 
 
 
-    with amqp.Connection('57.128.220.48:5672') as c:
+    with amqp.Connection(conn_address) as c:
         ch = c.channel()
         ch.basic_consume(queue='test', callback=on_message, no_ack=True)
         while True:
