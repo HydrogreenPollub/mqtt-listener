@@ -17,6 +17,13 @@ import amqp
 import os
 
 
+print(os.getenv("BROKER_ADDRESS"))
+print(os.getenv("USERNAME"))
+print(os.getenv("PASSWORD"))
+print(os.getenv("DBNAME"))
+print(os.getenv("USER"))
+print(os.getenv("DB_PASSWORD"))
+print(os.getenv("HOST"))
 
 
 # Define the RabbitMQ broker parameters
