@@ -5,8 +5,6 @@ services:
     restart: unless-stopped
     networks:
       - global-network
-    ports:
-      - '5672:5672'
     volumes:
       - /services/mqtt_client:/app
 
