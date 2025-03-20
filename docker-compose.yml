@@ -1,8 +1,13 @@
 services:
   mqtt_client:
     build: .
+    container_name: mqtt_client
+    restart: unless-stopped
     networks:
       - global-network
+    ports:
+      - '5672:5672'
+      - '5432:5432'
     volumes:
       - /services/mqtt_client:/app
 
