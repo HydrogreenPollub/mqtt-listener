@@ -24,7 +24,7 @@ broker_address = os.getenv("BROKER_ADDRESS")
 broker_port  = 5672
 username = os.getenv("USERNAME")
 password = os.getenv("PASSWORD")
-conn_address = broker_address+":"+broker_port
+conn_address = str(broker_address)+":"+str(broker_port)
 
 
 topic = "/sensors"
