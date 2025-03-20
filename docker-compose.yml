@@ -7,7 +7,6 @@ services:
       - global-network
     ports:
       - '5672:5672'
-      - '5432:5432'
     volumes:
       - /services/mqtt_client:/app
 
