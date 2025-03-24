@@ -12,25 +12,26 @@ import TSData
 import FuelCellMode
 
 import sys
-import time
+import time as tm
 import amqp
 import os
 
 
 print(os.getenv("BROKER_ADDRESS"))
-print(os.getenv("USERNAME"))
-print(os.getenv("PASSWORD"))
+print(os.getenv("BROKER_USERNAME"))
+print(os.getenv("BROKER_PASSWORD"))
 print(os.getenv("DBNAME"))
 print(os.getenv("USER"))
 print(os.getenv("DB_PASSWORD"))
 print(os.getenv("HOST"))
 
 
+
 # Define the RabbitMQ broker parameters
 broker_address = os.getenv("BROKER_ADDRESS")
-broker_port  = 5672
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
+broker_port  = os.getenv("BROKER_PORT")
+username = os.getenv("BROKER_USERNAME")
+password = os.getenv("BROKER_PASSWORD")
 conn_address = str(broker_address)+":"+str(broker_port)
 
 
@@ -47,11 +48,11 @@ t0=1733939032
 
 try:
     conn = psycopg2.connect(
-        dbname=os.getenv("DBNAME"),
-        user=os.getenv("USER"),
+        dbname=os.getenv("DB_DATABASE"),
+        user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
-        host=os.getenv("HOST"),
-        port="5432"
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT")
     )
     cursor = conn.cursor()
 
@@ -72,7 +73,8 @@ try:
 
     # Wstawianie danych
     
-        cursor.execute("INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (time.time(),'0',tsdata.FcVoltage(),tsdata.FcCurrent(),tsdata.FuelCellTemperature(),tsdata.ScVoltage(),tsdata.FcScCurrent(),tsdata.MotorCurrent(),tsdata.MotorSpeed(),tsdata.MotorPwm(),tsdata.VehicleSpeed(),tsdata.HydrogenPressure(),'2',tsdata.FanRpm(),tsdata.GpsLatitude(),tsdata.GpsLongitude(),tsdata.GpsAltitude(),tsdata.GpsSpeed(),tsdata.LapNumber()))
+        cursor.execute("INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+            (tm.time(),'0',tsdata.FcVoltage(),tsdata.FcCurrent(),tsdata.FuelCellTemperature(),tsdata.ScVoltage(),tsdata.FcScCurrent(),tsdata.MotorCurrent(),tsdata.MotorSpeed(),tsdata.MotorPwm(),tsdata.VehicleSpeed(),tsdata.HydrogenPressure(),'2',tsdata.FanRpm(),tsdata.GpsLatitude(),tsdata.GpsLongitude(),tsdata.GpsAltitude(),tsdata.GpsSpeed(),tsdata.LapNumber()))
         conn.commit()
         print("Dane zostały wprowadzone!")
 
