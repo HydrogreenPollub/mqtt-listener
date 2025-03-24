@@ -9,12 +9,14 @@ services:
       - /app
     environment:
       - BROKER_ADDRESS=${BROKER_ADDRESS}
-      - USERNAME=${USERNAME}
-      - PASSWORD=${PASSWORD}
-      - DBNAME=${DBNAME}
-      - USER=${USER}
+      - BROKER_PORT=${BROKER_PORT}
+      - BROKER_USERNAME=${BROKER_USERNAME}
+      - BROKER_PASSWORD=${BROKER_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - HOST=${HOST}
+      - DB_DATABASE=${DB_DATABASE}
 
 networks:
   global-network:
