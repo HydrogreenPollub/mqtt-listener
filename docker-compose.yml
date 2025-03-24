@@ -2,7 +2,6 @@ services:
   mqtt_client:
     build: .
     container_name: mqtt_client
-    restart: unless-stopped
     networks:
       - global-network
     volumes:
