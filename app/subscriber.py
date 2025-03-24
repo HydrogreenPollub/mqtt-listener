@@ -75,8 +75,7 @@ try:
 
     # Wstawianie danych
     
-        cursor.execute("INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            (tm.time(),'0',tsdata.FcVoltage(),tsdata.FcCurrent(),tsdata.FuelCellTemperature(),tsdata.ScVoltage(),tsdata.FcScCurrent(),tsdata.MotorCurrent(),tsdata.MotorSpeed(),tsdata.MotorPwm(),tsdata.VehicleSpeed(),tsdata.HydrogenPressure(),'2',tsdata.FanRpm(),tsdata.GpsLatitude(),tsdata.GpsLongitude(),tsdata.GpsAltitude(),tsdata.GpsSpeed(),tsdata.LapNumber()))
+        cursor.execute("INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(tm.time(),'0',tsdata.FcVoltage(),tsdata.FcCurrent(),tsdata.FuelCellTemperature(),tsdata.ScVoltage(),tsdata.FcScCurrent(),tsdata.MotorCurrent(),tsdata.MotorSpeed(),tsdata.MotorPwm(),tsdata.VehicleSpeed(),tsdata.HydrogenPressure(),'2',tsdata.FanRpm(),tsdata.GpsLatitude(),tsdata.GpsLongitude(),tsdata.GpsAltitude(),tsdata.GpsSpeed(),tsdata.LapNumber()))
         conn.commit()
         print("Dane zostały wprowadzone!")
 
