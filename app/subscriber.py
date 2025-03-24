@@ -18,12 +18,14 @@ import os
 
 
 print(os.getenv("BROKER_ADDRESS"))
+print(os.getenv("BROKER_PORT"))
 print(os.getenv("BROKER_USERNAME"))
 print(os.getenv("BROKER_PASSWORD"))
-print(os.getenv("DBNAME"))
-print(os.getenv("USER"))
+print(os.getenv("DB_DATABASE"))
+print(os.getenv("DB_USER"))
 print(os.getenv("DB_PASSWORD"))
-print(os.getenv("HOST"))
+print(os.getenv("DB_HOST"))
+print(os.getenv("DB_PORT"))
 
 
 
