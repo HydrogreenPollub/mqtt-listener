@@ -73,7 +73,7 @@ try:
     new_client.username_pw_set(username=username, password=password)
 
     # Connect to the broker
-    new_client.connect(broker_address, port=broker_port)
+    new_client.connect(host=broker_address, port=int(broker_port))
 
     new_client.subscribe((topic, 0))
 
