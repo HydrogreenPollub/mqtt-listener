@@ -29,7 +29,6 @@ print(os.getenv("DB_PORT"))
 
 
 
-
 # Define the MQTT broker parameters
 broker_address = os.getenv("BROKER_ADDRESS")
 broker_port  = os.getenv("BROKER_PORT")
@@ -52,9 +51,9 @@ try:
 
 
 # Define the callback function to handle incoming messages
-    def on_message(message):
-        print('Received message (delivery tag: {}): {}'.format(message.delivery_tag, message.body))
-        buf = bytearray(message.body)
+    def on_message(client, userdata, msg):
+        print('Received message')
+        buf = bytearray(msg.payload)
         tsdata = TSData.TSData.GetRootAs(buf,0)
         print(tsdata.FcVoltage())
     # Wstawianie danych
@@ -74,10 +73,11 @@ try:
 
     # Set the username and password for authentication
     new_client.username_pw_set(username=username, password=password)
-
+    
     # Connect to the broker
     new_client.connect(host=broker_address, port=int(broker_port))
 
+    # Subscribe to the topic
     new_client.subscribe((topic, 0))
 
     # Define the callback function to handle incoming messages
@@ -92,7 +92,4 @@ except Exception as e:
 finally:
     cursor.close()
     conn.close()
-
-
-
-
+    new_client.disconnect()
