@@ -50,12 +50,11 @@ def on_message(client, userdata, msg):
 
     # TODO parse flatbuffers file dynamically by reading ts_data.fbs
     cursor.execute(
-        "INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        "INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING/UPDATE",
         (tm.time(), '0', ts_data.FcVoltage(), ts_data.FcCurrent(), ts_data.FuelCellTemperature(), ts_data.ScVoltage(),
          ts_data.FcScCurrent(), ts_data.MotorCurrent(), ts_data.MotorSpeed(), ts_data.MotorPwm(), ts_data.VehicleSpeed(),
          ts_data.HydrogenPressure(), '2', ts_data.FanRpm(), ts_data.GpsLatitude(), ts_data.GpsLongitude(),
          ts_data.GpsAltitude(), ts_data.GpsSpeed(), ts_data.LapNumber()))
-
     conn.commit()
 
 try:
@@ -89,7 +88,7 @@ try:
 
 
 except Exception as e:
-    print("Error: ", e)
+    print("Błąd:", e)
 
 finally:
     cursor.close()
