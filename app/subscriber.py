@@ -33,7 +33,6 @@ password = os.getenv("BROKER_PASSWORD")
 topic = "sensors"
 
 def on_message(client, userdata, msg):
-    print('Received message')
     buffer = bytearray(msg.payload)
 
     now = datetime.datetime.now()
@@ -41,8 +40,10 @@ def on_message(client, userdata, msg):
     print(f"=== Message received - {len(buffer)} bytes - {timestamp} (UTC) ===")
     print(buffer.hex(sep=' '))
 
-    if len(buffer) != 128:
-        print(f"Required value not reached: frame save aborted (req val = {len(buffer)})")
+    required_bytes = 128
+
+    if len(buffer) != required_bytes:
+        print(f"Required value not reached: frame save aborted (bytes: {len(buffer)}/{required_bytes})")
         return
 
     ts_data = TSData.TSData.GetRootAs(buffer, 0)
