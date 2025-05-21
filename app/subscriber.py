@@ -47,6 +47,7 @@ def on_message(client, userdata, msg):
         return
 
     ts_data = TSData.TSData.GetRootAs(buffer, 0)
+    print(f"[Data check] Latitude: {ts_data.GpsLatitude()}, Longitude: {ts_data.GpsLongitude()}")
 
     # TODO parse flatbuffers file dynamically by reading ts_data.fbs
     cursor.execute(
@@ -55,6 +56,7 @@ def on_message(client, userdata, msg):
          ts_data.FcScCurrent(), ts_data.MotorCurrent(), ts_data.MotorSpeed(), ts_data.MotorPwm(), ts_data.VehicleSpeed(),
          ts_data.HydrogenPressure(), '2', ts_data.FanRpm(), ts_data.GpsLatitude(), ts_data.GpsLongitude(),
          ts_data.GpsAltitude(), ts_data.GpsSpeed(), ts_data.LapNumber()))
+
     conn.commit()
 
 try:
