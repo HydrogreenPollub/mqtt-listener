@@ -14,15 +14,15 @@ import flatbuffers
 import TSData
 import FuelCellMode
 
-print(os.getenv("BROKER_ADDRESS"))
-print(os.getenv("BROKER_PORT"))
-print(os.getenv("BROKER_USERNAME"))
-print(os.getenv("BROKER_PASSWORD"))
-print(os.getenv("DB_DATABASE"))
-print(os.getenv("DB_USER"))
-print(os.getenv("DB_PASSWORD"))
-print(os.getenv("DB_HOST"))
-print(os.getenv("DB_PORT"))
+print(f'BROKER_ADDRESS: {os.getenv("BROKER_ADDRESS")}')
+print(f'BROKER_PORT: {os.getenv("BROKER_PORT")}')
+print(f'BROKER_USERNAME: {os.getenv("BROKER_USERNAME")}')
+print(f'BROKER_PASSWORD: {os.getenv("BROKER_PASSWORD")}')
+print(f'DB_DATABASE: {os.getenv("DB_DATABASE")}')
+print(f'DB_USER: {os.getenv("DB_USER")}')
+print(f'DB_PASSWORD: {os.getenv("DB_PASSWORD")}')
+print(f'DB_HOST: {os.getenv("DB_HOST")}')
+print(f'DB_PORT: {os.getenv("DB_PORT")}')
 
 # Define the MQTT broker parameters
 broker_address = os.getenv("BROKER_ADDRESS")
@@ -36,12 +36,16 @@ def on_message(client, userdata, msg):
     print('Received message')
     buffer = bytearray(msg.payload)
 
-    ts_data = TSData.TSData.GetRootAs(buffer, 0)
-
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # [:-3] to get milliseconds instead of microseconds
     print(f"=== Message received - {len(buffer)} bytes - {timestamp} (UTC) ===")
     print(buffer.hex(sep=' '))
+
+    if len(buffer) != 128:
+        print(f"Required value not reached: frame save aborted (req val = {len(buffer)})")
+        return
+
+    ts_data = TSData.TSData.GetRootAs(buffer, 0)
 
     # TODO parse flatbuffers file dynamically by reading ts_data.fbs
     cursor.execute(
@@ -50,8 +54,8 @@ def on_message(client, userdata, msg):
          ts_data.FcScCurrent(), ts_data.MotorCurrent(), ts_data.MotorSpeed(), ts_data.MotorPwm(), ts_data.VehicleSpeed(),
          ts_data.HydrogenPressure(), '2', ts_data.FanRpm(), ts_data.GpsLatitude(), ts_data.GpsLongitude(),
          ts_data.GpsAltitude(), ts_data.GpsSpeed(), ts_data.LapNumber()))
-    conn.commit()
 
+    conn.commit()
 
 try:
     conn = psycopg2.connect(
@@ -84,7 +88,7 @@ try:
 
 
 except Exception as e:
-    print("Błąd:", e)
+    print("Error: ", e)
 
 finally:
     cursor.close()
