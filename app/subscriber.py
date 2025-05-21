@@ -14,16 +14,6 @@ import flatbuffers
 import TSData
 import FuelCellMode
 
-print(f'BROKER_ADDRESS: {os.getenv("BROKER_ADDRESS")}')
-print(f'BROKER_PORT: {os.getenv("BROKER_PORT")}')
-print(f'BROKER_USERNAME: {os.getenv("BROKER_USERNAME")}')
-print(f'BROKER_PASSWORD: {os.getenv("BROKER_PASSWORD")}')
-print(f'DB_DATABASE: {os.getenv("DB_DATABASE")}')
-print(f'DB_USER: {os.getenv("DB_USER")}')
-print(f'DB_PASSWORD: {os.getenv("DB_PASSWORD")}')
-print(f'DB_HOST: {os.getenv("DB_HOST")}')
-print(f'DB_PORT: {os.getenv("DB_PORT")}')
-
 # Define the MQTT broker parameters
 broker_address = os.getenv("BROKER_ADDRESS")
 broker_port = os.getenv("BROKER_PORT")
@@ -60,6 +50,17 @@ def on_message(client, userdata, msg):
     conn.commit()
 
 try:
+    print("=== PROGRAM START ===")
+    print(f'BROKER_ADDRESS: {os.getenv("BROKER_ADDRESS")}')
+    print(f'BROKER_PORT: {os.getenv("BROKER_PORT")}')
+    print(f'BROKER_USERNAME: {os.getenv("BROKER_USERNAME")}')
+    print(f'BROKER_PASSWORD: {os.getenv("BROKER_PASSWORD")}')
+    print(f'DB_DATABASE: {os.getenv("DB_DATABASE")}')
+    print(f'DB_USER: {os.getenv("DB_USER")}')
+    print(f'DB_PASSWORD: {os.getenv("DB_PASSWORD")}')
+    print(f'DB_HOST: {os.getenv("DB_HOST")}')
+    print(f'DB_PORT: {os.getenv("DB_PORT")}')
+
     conn = psycopg2.connect(
         dbname=os.getenv("DB_DATABASE"),
         user=os.getenv("DB_USER"),
@@ -67,6 +68,7 @@ try:
         host=os.getenv("DB_HOST"),
         port=os.getenv("DB_PORT")
     )
+    print("Database connection was successful")
 
     cursor = conn.cursor()
 
@@ -78,6 +80,7 @@ try:
 
     # Connect to the broker
     new_client.connect(host=broker_address, port=int(broker_port))
+    print("MQTT connection was successful")
 
     # Subscribe to the topic
     new_client.subscribe(topic, options=SubscribeOptions(qos=2))
@@ -90,7 +93,7 @@ try:
 
 
 except Exception as e:
-    print("Błąd:", e)
+    print("Error:", e)
 
 finally:
     cursor.close()
