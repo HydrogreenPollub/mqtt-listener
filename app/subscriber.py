@@ -1,3 +1,4 @@
+import re
 import sys
 import time as tm
 import datetime
@@ -14,6 +15,13 @@ import flatbuffers
 import TSData
 import FuelCellMode
 
+from tempfile import SpooledTemporaryFile
+import capnp
+#import ts_data_capnp
+
+capnp.remove_import_hook()
+ts_data_capnp = capnp.load('./ts_data.capnp')
+
 # Define the MQTT broker parameters
 broker_address = os.getenv("BROKER_ADDRESS")
 broker_port = os.getenv("BROKER_PORT")
@@ -21,6 +29,11 @@ username = os.getenv("BROKER_USERNAME")
 password = os.getenv("BROKER_PASSWORD")
 
 topic = "sensors"
+
+def to_snake_case(name):
+    """Converts a CamelCase string to snake_case."""
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 def on_message(client, userdata, msg):
     buffer = bytearray(msg.payload)
@@ -36,16 +49,26 @@ def on_message(client, userdata, msg):
         print(f"Required value not reached: frame save aborted (bytes: {len(buffer)}/{required_bytes})")
         return
 
-    ts_data = TSData.TSData.GetRootAs(buffer, 0)
-    print(f"[Data check] Latitude: {ts_data.GpsLatitude()}, Longitude: {ts_data.GpsLongitude()}")
+    ts_data_flatbuffers = TSData.TSData.GetRootAs(buffer)
+    print(f"[Data check - FlatBuffers] Latitude: {ts_data_flatbuffers.GpsLatitude()}, Longitude: {ts_data_flatbuffers.GpsLongitude()}")
 
-    # TODO parse flatbuffers file dynamically by reading ts_data.fbs
+    f = SpooledTemporaryFile(256, 'wb+')
+    f.write(buffer)
+    f.seek(0)
+    data = ts_data_capnp.TSData.read(f)
+    ts_data = data.to_dict()
+    print(f"[Data check - Capnp] Latitude: {ts_data["gpsLatitude"]}, Longitude: {ts_data["gpsLongitude"]}")
+
+    snake_case_data = {to_snake_case(k): v for k, v in ts_data.items()}
+
+    column_names_str = ", ".join(snake_case_data)
+    placeholders_str = ", ".join(["%s"] * len(snake_case_data))
+
     cursor.execute(
-        "INSERT INTO measurements (time, vehicle_type, fc_voltage, fc_current, fc_temperature, sc_motor_voltage, sc_current, motor_current, motor_speed, motor_pwm, vehicle_speed, h2_pressure, h2_leak_level, fan_rpm, gps_latitude, gps_longitude, gps_altitude, gps_speed, lap_number) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING",
-        (tm.time(), '0', ts_data.FcVoltage(), ts_data.FcCurrent(), ts_data.FuelCellTemperature(), ts_data.ScVoltage(),
-         ts_data.FcScCurrent(), ts_data.MotorCurrent(), ts_data.MotorSpeed(), ts_data.MotorPwm(), ts_data.VehicleSpeed(),
-         ts_data.HydrogenPressure(), '2', ts_data.FanRpm(), ts_data.GpsLatitude(), ts_data.GpsLongitude(),
-         ts_data.GpsAltitude(), ts_data.GpsSpeed(), ts_data.LapNumber()))
+        f"INSERT INTO measurements ({column_names_str}) "
+        f"VALUES ({placeholders_str}) "
+        "ON CONFLICT DO NOTHING"
+    )
 
     conn.commit()
 
