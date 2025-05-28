@@ -49,20 +49,23 @@ def on_message(client, userdata, msg):
         print(f"Required value not reached: frame save aborted (bytes: {len(buffer)}/{required_bytes})")
         return
 
-    ts_data_flatbuffers = TSData.TSData.GetRootAs(buffer)
-    print(f"[Data check - FlatBuffers] Latitude: {ts_data_flatbuffers.GpsLatitude()}, Longitude: {ts_data_flatbuffers.GpsLongitude()}")
+    try:
+        ts_data_flatbuffers = TSData.TSData.GetRootAs(buffer)
+        print(f"[Data check - FlatBuffers] Latitude: {ts_data_flatbuffers.GpsLatitude()}, Longitude: {ts_data_flatbuffers.GpsLongitude()}")
+    except:
+        print("Flatbuffers conversion did not suceed") 
 
-    f = SpooledTemporaryFile(256, 'wb+')
-    print(f"f init: {f}")
-    f.write(buffer)
-    print(f"f write: {f}")
-    f.seek(0)
-    print(f"f seek: {f}")
-    data = ts_data_capnp.TSData.read(f)
-    print(f"data read: {data}")
-    ts_data = data.to_dict()
-    print(f"data to dict: {ts_data}")
-    print(f"[Data check - Capnp] Latitude: {ts_data["gpsLatitude"]}, Longitude: {ts_data["gpsLongitude"]}")
+    try:
+        f = SpooledTemporaryFile(256, 'wb+')
+        f.write(buffer)
+        f.seek(0)
+        data = ts_data_capnp.TSData.read(f)
+        ts_data = data.to_dict()
+        print(f"data to dict: {ts_data}")
+        print(f"[Data check - Capnp] Latitude: {ts_data["gpsLatitude"]}, Longitude: {ts_data["gpsLongitude"]}")
+    except:
+        print("Capnp conversion did not succeed") 
+        return
 
     snake_case_data = {to_snake_case(key): value for key, value in ts_data.items()}
 
