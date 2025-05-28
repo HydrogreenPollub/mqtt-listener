@@ -59,28 +59,26 @@ def on_message(client, userdata, msg):
     ts_data = data.to_dict()
     print(f"[Data check - Capnp] Latitude: {ts_data["gpsLatitude"]}, Longitude: {ts_data["gpsLongitude"]}")
 
-    snake_case_data = {to_snake_case(k): v for k, v in ts_data.items()}
+    snake_case_data = {to_snake_case(key): value for key, value in ts_data.items()}
 
     column_names_str = ", ".join(snake_case_data)
     placeholders_str = ", ".join(["%s"] * len(snake_case_data))
 
-    cursor.execute(
+    query = (
         f"INSERT INTO measurements ({column_names_str}) "
         f"VALUES ({placeholders_str}) "
         "ON CONFLICT DO NOTHING"
     )
+    values = tuple(value for key, value in ts_data.items())
 
+    cursor.execute(query, values)
     conn.commit()
 
 try:
     print("=== PROGRAM START ===")
     print(f'BROKER_ADDRESS: {os.getenv("BROKER_ADDRESS")}')
     print(f'BROKER_PORT: {os.getenv("BROKER_PORT")}')
-    print(f'BROKER_USERNAME: {os.getenv("BROKER_USERNAME")}')
-    print(f'BROKER_PASSWORD: {os.getenv("BROKER_PASSWORD")}')
     print(f'DB_DATABASE: {os.getenv("DB_DATABASE")}')
-    print(f'DB_USER: {os.getenv("DB_USER")}')
-    print(f'DB_PASSWORD: {os.getenv("DB_PASSWORD")}')
     print(f'DB_HOST: {os.getenv("DB_HOST")}')
     print(f'DB_PORT: {os.getenv("DB_PORT")}')
 
