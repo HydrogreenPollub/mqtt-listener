@@ -1,7 +1,7 @@
 services:
-  mqtt_client:
+  mqtt-client:
+    container_name: mqtt-client
     build: .
-    container_name: mqtt_client
     networks:
       - global-network
     volumes:
@@ -16,13 +16,8 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
+      - MQTT_TOPIC=${MQTT_TOPIC}
 
 networks:
   global-network:
     external: true
-
-
-
-
-
-
