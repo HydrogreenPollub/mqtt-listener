@@ -1,7 +1,6 @@
 services:
   mqtt-client:
     container_name: mqtt-client
-    image: mqtt-client
     build: .
     networks:
       - global-network
