@@ -1,3 +1,0 @@
-[submodule "app/proto"]
-	path = app/proto
-	url = https://github.com/HydrogreenPollub/capnp-proto
